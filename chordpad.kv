@@ -1,0 +1,250 @@
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+#:import Factory kivy.factory.Factory
+# <Button>
+#     font_size: min(self.height-5, self.width/5.2)
+
+<ScreenOrganize>:
+    transition: SwapTransition()
+    MenuScreen:
+        name: "menu"
+    ReadingModeScreen:
+        name: "reading"
+    ChordpadScreen:
+        name: "editing"
+
+
+<MenuScreen>
+    name: "menu"
+    
+
+<ReadingModeScreen>
+    name: "reading"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            id: filename_rlabel
+            size_hint: (1, 0.05)
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_style: "Caption"
+        Button:
+            text: "Main Menu"
+            size_hint: (1, 0.1)
+            on_release:
+                root.manager.get_screen("menu").ids.filechooser._update_files()
+                root.manager.current = "menu"
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_type: ['bars', 'content']
+            bar_width: 10
+            Label:
+                id: reading_label
+                size_hint: 1, None
+                size: self.texture_size
+                halign: "center"
+                valign: "center"
+                font_size: self.width/15
+        Button:
+            text: "Edit Mode"
+            size_hint: (1, 0.1)
+            on_release:
+                root.manager.get_screen("editing").ids.chordpad.text = reading_label.text
+                root.manager.current = "editing"
+
+<ChordpadScreen>
+    name: "editing"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            id: filename_label
+            size_hint: (1, 0.05)
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_style: "Caption"
+        Button:
+            text: "Main Menu"
+            size_hint: (1, 0.1)
+            on_release:
+                root.check_if_saved()
+                root.manager.get_screen("menu").ids.filechooser._update_files()
+                root.manager.current = "menu"
+        Button:
+            text: "Reading Mode"
+            size_hint: (1, 0.1)
+            on_release:
+                root.manager.current = "reading"
+                root.manager.get_screen("reading").ids.reading_label.text = chordpad.text
+
+        ScrollView:
+            id: scrlv
+            do_scroll_x: False
+            do_scroll_y: True
+            scroll_type: ['bars', 'content']
+            bar_width: 10
+            TextInput: # chordpad
+                id: chordpad
+                size_hint: 1, None
+                height: max(self.minimum_height, scrlv.height)
+                halign: "center"
+                valign: "center"
+                font_size: self.width/15
+                auto_indent: True
+                background_color: (240/255, 240/255, 240/255, 1)
+
+        GridLayout:
+            cols: 6
+            size_hint: (1, 0.4)
+            Button:
+                text: "INTRO"
+                on_release: root.put_text("INTRO")
+            Button:
+                text: "VERSE"
+                on_release: root.put_text("VERSE")
+            Button:
+                text: "PRE-CH"
+                on_release: root.put_text("PRE-CHORUS")
+            Button:
+                text: "CHORUS"
+                on_release: root.put_text("CHORUS")
+            Button:
+                text: "BRIDGE"
+                on_release: root.put_text("BRIDGE")
+            Button:
+                text: "OUTRO"
+                on_release: root.put_text("OUTRO")
+            Button:
+                text: "B"
+                on_release: chordpad.insert_text(" B")
+            Button:
+                text: "C"
+                on_release: chordpad.insert_text(" C")
+            Button:
+                text: "C#"
+                on_release: chordpad.insert_text(" C#")
+            Button:
+                text: "D"
+                on_release: chordpad.insert_text(" D")
+            Button:
+                text: "D#"
+                on_release: chordpad.insert_text(" D#")
+            Button:
+                text: "E"
+                on_release: chordpad.insert_text(" E")
+            Button:
+                text: "F"
+                on_release: chordpad.insert_text(" F")
+            Button:
+                text: "F#"
+                on_release: chordpad.insert_text(" F#")
+            Button:
+                text: "G"
+                on_release: chordpad.insert_text(" G")
+            Button:
+                text: "G#"
+                on_release: chordpad.insert_text(" G#")
+            Button:
+                text: "A"
+                on_release: chordpad.insert_text(" A")
+            Button:
+                text: "A#"
+                on_release: chordpad.insert_text(" A#")
+            Button:
+                text: "7"
+                on_release: chordpad.insert_text("7")
+            Button:
+                text: "m"
+                on_release: chordpad.insert_text("m")
+            Button:
+                text: "m7"
+                on_release: chordpad.insert_text("m7")
+            Button:
+                text: "x2"
+                on_release: chordpad.insert_text(" (x2)")
+            Button:
+                text: "x3"
+                on_release: chordpad.insert_text(" (x3)")
+            Button:
+                text: "x4"
+                on_release: chordpad.insert_text(" (x4)")
+            Button:
+                text: "New"
+                on_release:
+                    chordpad.text = ""
+                    filename_label.text = "Untitled - Chordpad"
+                    root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
+            Button:
+                text: "Open"
+                on_release:
+                    root.manager.get_screen("menu").ids.filechooser._update_files()
+                    root.manager.current = "menu"
+            Button:
+                text: "Save"
+                on_release:
+                    root.savetxt()
+                    # Factory.SaveAsDialog().open()
+                    root.check_if_saved()
+            Button:
+                text: "Enter"
+                on_release: chordpad.insert_text("\n")
+            Button:
+                text: "Undo"
+                on_release: chordpad.do_undo()
+            Button:
+                text: "Redo"
+                on_release: chordpad.do_redo()
+
+<SaveAsDialog>
+    title: "Save As"
+    size_hint: (0.8,0.2)
+    FloatLayout:
+        TextInput:
+            id: filename
+            focus: True
+            hint_text: "Untitled Chordpad"
+            multiline: False
+            halign: "center"
+            valign: "center"
+            size_hint: 0.9, 0.3
+            pos_hint: {'x':0.05, 'y':0.55}
+            on_text_validate: root.save_as()
+        Button:
+            text: "Save"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0, 'y':0.1}
+            on_release: root.save_as()
+
+        Button:
+            id: cancel_pressed
+            text: "Discard"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.5, 'y':0.1}
+            on_release: root.dismiss()
+
+<SaveChangesDialog>
+    title: "Chordpad" # mozda da pise ime fajla?
+    size_hint: (0.8,0.2)
+    auto_dismiss: False
+    FloatLayout:
+        Label:
+            text: "Save Changes?"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.25, 'y':0.58}
+        Button:
+            text: "Yes"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0, 'y':0.1}
+            on_release:
+                Factory.MenuScreen().save_changes()
+                root.dismiss()
+        Button:
+            text: "No"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.5, 'y':0.1}
+            on_release: root.dismiss()
