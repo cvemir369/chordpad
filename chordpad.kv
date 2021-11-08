@@ -15,7 +15,37 @@
 
 <MenuScreen>
     name: "menu"
-    
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        Label:
+            size_hint: (1, 0.05)
+            text: "Chordpad by cvemir369"
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_style: "Caption"
+        GridLayout:
+            id: pads
+            cols: 1
+            size_hint_y: 0.8
+            padding: [5, 5, 5, 5]
+        Button:
+            size_hint: 1, 0.1
+            text: "New chordpad"
+            font_size: self.width/20
+            on_release:
+                root.manager.current = "editing"
+                root.manager.get_screen("editing").ids.chordpad.text = ""
+                root.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
+                root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
+        Button:
+            id: back_to_chordpad
+            size_hint: 1, 0.1
+            text: "Back to chordpad"
+            font_size: self.width/20
+            on_release: root.manager.current = "editing"
+
 
 <ReadingModeScreen>
     name: "reading"
