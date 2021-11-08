@@ -56,21 +56,30 @@ class SaveChangesDialog(Popup):
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
+        global lista
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
-        cur.execute(''' SELECT * FROM chordpad ''')
+        cur.execute(''' SELECT title FROM chordpad ''')
+        # lista = []
+        lista = cur.fetchall()
+        print(lista)
+        cur.execute(''' SELECT title FROM chordpad ''')
         for item in cur.fetchall():
-            pad_title = str(item[0])
+            pad_title = item[0]
             button = Button(text=pad_title)
-            # button.bind(on_press=self.open_clicked)
-            button.bind(on_release=self.open_clicked)
             self.ids.pads.add_widget(button)
+            self.ids[pad_title] = button
+            button.bind(on_press=self.return_button_id_on_press)
+            button.bind(on_release=self.open_clicked)
         con.close()
 
     def open_clicked(self, *args):  # opens file in ReadingModeScreen (called from kv)
-        pad_name = self.text
-        self.manager.get_screen("editing").ids.filename_label.text = pad_name
+        global pad_title
+        self.manager.get_screen("editing").ids.filename_label.text = 'pad_title'
         self.manager.current = "editing"
+
+    def return_button_id_on_press(self, *args):
+        print(self.ids)
 
     def back_to_cp(self):  # set untitled if back to chordpad on start
         pass

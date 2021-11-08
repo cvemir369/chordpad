@@ -29,7 +29,7 @@
             id: pads
             cols: 1
             size_hint_y: 0.8
-            padding: [5, 5, 5, 5]
+            padding: [10,10,10,10]
         Button:
             size_hint: 1, 0.1
             text: "New chordpad"
@@ -102,8 +102,8 @@
             text: "Main Menu"
             size_hint: (1, 0.1)
             on_release:
-                root.check_if_saved()
-                root.manager.get_screen("menu").ids.filechooser._update_files()
+                # root.check_if_saved()
+                # root.manager.get_screen("menu").ids.filechooser._update_files()
                 root.manager.current = "menu"
         Button:
             text: "Reading Mode"
