@@ -1,7 +1,7 @@
 # temp rezolucija
 from kivy.config import Config
-Config.set('graphics', 'width', '423')
-Config.set('graphics', 'height', '918')
+Config.set('graphics', 'width', '400')
+Config.set('graphics', 'height', '650') #918
 
 import sqlite3
 import os
@@ -33,6 +33,7 @@ con.close()
 # con.commit()
 # con.close()
 
+lista = []
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
@@ -57,30 +58,38 @@ class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
         global lista
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute(''' SELECT title FROM chordpad ''')
-        # lista = []
-        lista = cur.fetchall()
-        print(lista)
-        cur.execute(''' SELECT title FROM chordpad ''')
-        for item in cur.fetchall():
-            pad_title = item[0]
-            button = Button(text=pad_title)
-            self.ids.pads.add_widget(button)
-            self.ids[pad_title] = button
-            button.bind(on_press=self.return_button_id_on_press)
-            button.bind(on_release=self.open_clicked)
-        con.close()
+        if lista == []:
+            con = sqlite3.connect("chordpad.db")
+            cur = con.cursor()
+            cur.execute(''' SELECT title FROM chordpad ''')
+            lista = cur.fetchall()
+            print(lista)
+            cur.execute(''' SELECT title FROM chordpad ''')
+            for item in cur.fetchall():
+                pad_title = item[0]
+                button = Button(text=pad_title)
+                self.ids.pads.add_widget(button)
+                self.ids[pad_title] = button
+                button.bind(on_press=self.return_button_id_on_press)
+                #button.bind(on_release=self.open_clicked)
+            con.close()
 
     def open_clicked(self, *args):  # opens file in ReadingModeScreen (called from kv)
         global pad_title
         self.manager.get_screen("editing").ids.filename_label.text = 'pad_title'
         self.manager.current = "editing"
 
-    def return_button_id_on_press(self, *args):
-        print(self.ids)
-
+    def return_button_id_on_press(self, instance):
+        print(instance.text)
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
+        self.manager.get_screen("editing").ids.filename_label.text = str(cur.fetchone())
+        cur.execute(''' SELECT text FROM chordpad WHERE title = ?''', (instance.text,))
+        self.manager.get_screen("editing").ids.chordpad.text = str(cur.fetchone())
+        self.manager.current = "editing"
+        con.close()
+    
     def back_to_cp(self):  # set untitled if back to chordpad on start
         pass
 
