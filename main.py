@@ -70,7 +70,7 @@ class MenuScreen(Screen):  # main menu screen
                 button = Button(text=pad_title)
                 self.ids.pads.add_widget(button)
                 self.ids[pad_title] = button
-                button.bind(on_press=self.return_button_id_on_press)
+                button.bind(on_release=self.return_button_id_on_press)
                 #button.bind(on_release=self.open_clicked)
             con.close()
 
@@ -84,9 +84,11 @@ class MenuScreen(Screen):  # main menu screen
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
-        self.manager.get_screen("editing").ids.filename_label.text = str(cur.fetchone())
+        current_pad_title = cur.fetchone()[0]
+        self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
         cur.execute(''' SELECT text FROM chordpad WHERE title = ?''', (instance.text,))
-        self.manager.get_screen("editing").ids.chordpad.text = str(cur.fetchone())
+        current_pad_text = cur.fetchone()[0]
+        self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
         self.manager.current = "editing"
         con.close()
     
