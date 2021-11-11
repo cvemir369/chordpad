@@ -63,7 +63,6 @@ class MenuScreen(Screen):  # main menu screen
             cur = con.cursor()
             cur.execute(''' SELECT title FROM chordpad ''')
             lista = cur.fetchall()
-            print(lista)
             cur.execute(''' SELECT title FROM chordpad ''')
             for item in cur.fetchall():
                 pad_title = item[0]
@@ -71,7 +70,6 @@ class MenuScreen(Screen):  # main menu screen
                 self.ids.pads.add_widget(button)
                 self.ids[pad_title] = button
                 button.bind(on_release=self.return_button_id_on_press)
-                #button.bind(on_release=self.open_clicked)
             con.close()
 
     def open_clicked(self, *args):  # opens file in ReadingModeScreen (called from kv)
@@ -80,15 +78,16 @@ class MenuScreen(Screen):  # main menu screen
         self.manager.current = "editing"
 
     def return_button_id_on_press(self, instance):
-        print(instance.text)
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
         current_pad_title = cur.fetchone()[0]
         self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
+        self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
         cur.execute(''' SELECT text FROM chordpad WHERE title = ?''', (instance.text,))
         current_pad_text = cur.fetchone()[0]
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
+        self.manager.get_screen("reading").ids.reading_label.text = current_pad_text
         self.manager.current = "editing"
         con.close()
     
@@ -104,8 +103,11 @@ class MenuScreen(Screen):  # main menu screen
 
 class ChordpadScreen(Screen):  # editing mode screen
     def savetxt(self):
-        global cptxt
-        cptxt = self.ids.chordpad.text
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute(''' INSERT INTO chordpad VALUES ('Untitled', ?) ''', (self.ids.chordpad.text,))
+        con.commit()
+        con.close()
 
     def put_text(self, item):  # intro, verse, etc. auto enter ili ne
         if self.ids.chordpad.text == "":

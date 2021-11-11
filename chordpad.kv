@@ -63,9 +63,7 @@
         Button:
             text: "Main Menu"
             size_hint: (1, 0.1)
-            on_release:
-                root.manager.get_screen("menu").ids.filechooser._update_files()
-                root.manager.current = "menu"
+            on_release: root.manager.current = "menu"
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
@@ -81,9 +79,7 @@
         Button:
             text: "Edit Mode"
             size_hint: (1, 0.1)
-            on_release:
-                root.manager.get_screen("editing").ids.chordpad.text = reading_label.text
-                root.manager.current = "editing"
+            on_release: root.manager.current = "editing"
 
 <ChordpadScreen>
     name: "editing"
@@ -219,7 +215,7 @@
                 on_release:
                     root.savetxt()
                     # Factory.SaveAsDialog().open()
-                    root.check_if_saved()
+                    # root.check_if_saved()
             Button:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
