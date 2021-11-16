@@ -22,18 +22,17 @@ from kivy.clock import mainthread
 # create database file
 con = sqlite3.connect("chordpad.db")
 cur = con.cursor()
-cur.execute('''CREATE TABLE IF NOT EXISTS chordpad (title, text)''')
+cur.execute('''CREATE TABLE IF NOT EXISTS chordpad (id INTEGER PRIMARY KEY, title TEXT NOT NULL, text TEXT)''')
 con.commit()
 con.close()
 
 # # create db item
 # con = sqlite3.connect("chordpad.db")
 # cur = con.cursor()
-# cur.execute(''' INSERT INTO chordpad VALUES ('chordpad#2', 'C# D E') ''')
+# cur.execute(''' INSERT INTO chordpad (title, text) VALUES ('chordpad#2', 'C# D E') ''')
 # con.commit()
 # con.close()
 
-lista = []
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
@@ -57,20 +56,18 @@ class SaveChangesDialog(Popup):
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
-        global lista
-        if lista == []:
-            con = sqlite3.connect("chordpad.db")
-            cur = con.cursor()
-            cur.execute(''' SELECT title FROM chordpad ''')
-            lista = cur.fetchall()
-            cur.execute(''' SELECT title FROM chordpad ''')
-            for item in cur.fetchall():
-                pad_title = item[0]
-                button = Button(text=pad_title)
-                self.ids.pads.add_widget(button)
-                self.ids[pad_title] = button
-                button.bind(on_release=self.return_button_id_on_press)
-            con.close()
+        self.ids.pads.clear_widgets()
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute(''' SELECT id, title, text FROM chordpad ''')
+        for item in cur.fetchall():
+            pad_id = str(item[0])
+            pad_title = item[1]
+            button = Button(text=pad_title)
+            self.ids.pads.add_widget(button)
+            self.ids[pad_id] = button
+            button.bind(on_release=self.return_button_id_on_press)
+        con.close()
 
     def open_clicked(self, *args):  # opens file in ReadingModeScreen (called from kv)
         global pad_title
@@ -80,16 +77,21 @@ class MenuScreen(Screen):  # main menu screen
     def return_button_id_on_press(self, instance):
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
+        
         cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
         current_pad_title = cur.fetchone()[0]
+        current_pad_id = list(self.ids.keys())[list(self.ids.values()).index(instance)]
+        
         self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
         self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
-        cur.execute(''' SELECT text FROM chordpad WHERE title = ?''', (instance.text,))
+
+        cur.execute(''' SELECT text FROM chordpad WHERE id = ?''', (current_pad_id,))
         current_pad_text = cur.fetchone()[0]
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
         self.manager.get_screen("reading").ids.reading_label.text = current_pad_text
         self.manager.current = "editing"
         con.close()
+    
     
     def back_to_cp(self):  # set untitled if back to chordpad on start
         pass
@@ -102,10 +104,12 @@ class MenuScreen(Screen):  # main menu screen
 
 
 class ChordpadScreen(Screen):  # editing mode screen
-    def savetxt(self):
+    def save_new(self):
+        save_text = self.ids.chordpad.text
+        print(save_text)
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
-        cur.execute(''' INSERT INTO chordpad VALUES ('Untitled', ?) ''', (self.ids.chordpad.text,))
+        cur.execute(''' INSERT INTO chordpad (title, text) VALUES (?, ?)''', ('Untitled', save_text))
         con.commit()
         con.close()
 
