@@ -44,7 +44,9 @@
             size_hint: 1, 0.1
             text: "Back to chordpad"
             font_size: self.width/20
-            on_release: root.manager.current = "editing"
+            on_release:
+                root.back_to_chordpad()
+                root.manager.current = "editing"
 
 
 <ReadingModeScreen>
@@ -206,12 +208,12 @@
                     root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
             Button:
                 text: "Open"
-                on_release: root.manager.current = "menu"
+                on_release:
+                    root.check_if_saved()
+                    root.manager.current = "menu"
             Button:
                 text: "Save"
                 on_release:
-                    # root.save_new()
-                    # Factory.SaveAsDialog().open()
                     root.check_if_saved()
             Button:
                 text: "Enter"

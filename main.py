@@ -36,15 +36,16 @@ con.close()
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
+        global current_pad_text
         try:
             file_name = self.ids.filename.text
-            print(file_name)
-            print(text_to_save)
             con = sqlite3.connect("chordpad.db")
             cur = con.cursor()
             cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''', (file_name, file_name, text_to_save))
             con.commit()
             con.close()
+            current_pad_text = text_to_save
+            #treba da file_name postane chordpad's label text
             self.dismiss()
 
         except:
@@ -54,11 +55,13 @@ class SaveAsDialog(Popup):  # save dialog popup
 
 class SaveChangesDialog(Popup):
     def save_changes(self):
+        global current_pad_text
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         cur.execute(''' UPDATE chordpad SET text = ? WHERE id = ? ''', (text_to_save, current_pad_id))
         con.commit()
         con.close()
+        current_pad_text = text_to_save
         self.dismiss()
 
 
@@ -86,34 +89,32 @@ class MenuScreen(Screen):  # main menu screen
         cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
         current_pad_title = cur.fetchone()[0]
         current_pad_id = list(self.ids.keys())[list(self.ids.values()).index(instance)]
-        
         self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
         self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
-
         cur.execute(''' SELECT text FROM chordpad WHERE id = ?''', (current_pad_id,))
         current_pad_text = cur.fetchone()[0]
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
         self.manager.get_screen("reading").ids.reading_label.text = current_pad_text
         self.manager.current = "editing"
         con.close()
-    
-    
-    def back_to_cp(self):  # set untitled if back to chordpad on start
-        pass
+
+    def back_to_chordpad(self):  # set untitled if back to chordpad on start
+        global current_pad_text
+        try:
+            if current_pad_text != '':
+                pass
+        except:
+            current_pad_text = ''
+            self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
+            self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
+            self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
+            
 
     def set_filename_label(self):  # set label for the opened file as filename
         pass
 
 
 class ChordpadScreen(Screen):  # editing mode screen
-    def save_new(self):
-        save_text = self.ids.chordpad.text
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute(''' INSERT INTO chordpad (title, text) VALUES (?, ?)''', ('Untitled', save_text))
-        con.commit()
-        con.close()
-
     def put_text(self, item):  # intro, verse, etc. auto enter ili ne
         if self.ids.chordpad.text == "":
             self.ids.chordpad.insert_text(f"{item}: ")
