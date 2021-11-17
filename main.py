@@ -22,7 +22,7 @@ from kivy.clock import mainthread
 # create database file
 con = sqlite3.connect("chordpad.db")
 cur = con.cursor()
-cur.execute('''CREATE TABLE IF NOT EXISTS chordpad (id INTEGER PRIMARY KEY, title TEXT NOT NULL, text TEXT)''')
+cur.execute('''CREATE TABLE IF NOT EXISTS chordpad (id TEXT NOT NULL, title TEXT NOT NULL, text TEXT)''')
 con.commit()
 con.close()
 
@@ -36,12 +36,15 @@ con.close()
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
-        global cptxt, file_name, active_file
         try:
             file_name = self.ids.filename.text
-            with open(os.path.join(gl(), f"{file_name}.txt"), "w") as f:
-                f.write(cptxt)
-            active_file = cptxt
+            print(file_name)
+            print(text_to_save)
+            con = sqlite3.connect("chordpad.db")
+            cur = con.cursor()
+            cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''', (file_name, file_name, text_to_save))
+            con.commit()
+            con.close()
             self.dismiss()
 
         except:
@@ -50,7 +53,13 @@ class SaveAsDialog(Popup):  # save dialog popup
 
 
 class SaveChangesDialog(Popup):
-    pass
+    def save_changes(self):
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute(''' UPDATE chordpad SET text = ? WHERE id = ? ''', (text_to_save, current_pad_id))
+        con.commit()
+        con.close()
+        self.dismiss()
 
 
 class MenuScreen(Screen):  # main menu screen
@@ -69,12 +78,8 @@ class MenuScreen(Screen):  # main menu screen
             button.bind(on_release=self.return_button_id_on_press)
         con.close()
 
-    def open_clicked(self, *args):  # opens file in ReadingModeScreen (called from kv)
-        global pad_title
-        self.manager.get_screen("editing").ids.filename_label.text = 'pad_title'
-        self.manager.current = "editing"
-
     def return_button_id_on_press(self, instance):
+        global current_pad_text, current_pad_id
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         
@@ -99,14 +104,10 @@ class MenuScreen(Screen):  # main menu screen
     def set_filename_label(self):  # set label for the opened file as filename
         pass
 
-    def save_changes(self):
-        pass
-
 
 class ChordpadScreen(Screen):  # editing mode screen
     def save_new(self):
         save_text = self.ids.chordpad.text
-        print(save_text)
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         cur.execute(''' INSERT INTO chordpad (title, text) VALUES (?, ?)''', ('Untitled', save_text))
@@ -120,16 +121,16 @@ class ChordpadScreen(Screen):  # editing mode screen
             self.ids.chordpad.insert_text(f"\n{item}: ")
 
     def check_if_saved(self):
+        global text_to_save
         if self.ids.chordpad.text != "" and self.ids.filename_label.text == "Untitled - Chordpad":
-            self.savetxt()
+            text_to_save = self.ids.chordpad.text
             SaveAsDialog().open()
 
-        elif active_file != self.ids.chordpad.text:
-            self.savetxt()
+        elif current_pad_text != self.ids.chordpad.text:
+            text_to_save = self.ids.chordpad.text
             SaveChangesDialog().open()
 
         else:
-            self.manager.get_screen("menu").ids.filechooser._update_files()
             self.manager.current = "menu"
 
 

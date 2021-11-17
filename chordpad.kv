@@ -98,8 +98,7 @@
             text: "Main Menu"
             size_hint: (1, 0.1)
             on_release:
-                # root.check_if_saved()
-                # root.manager.get_screen("menu").ids.filechooser._update_files()
+                root.check_if_saved()
                 root.manager.current = "menu"
         Button:
             text: "Reading Mode"
@@ -207,15 +206,13 @@
                     root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
             Button:
                 text: "Open"
-                on_release:
-                    root.manager.get_screen("menu").ids.filechooser._update_files()
-                    root.manager.current = "menu"
+                on_release: root.manager.current = "menu"
             Button:
                 text: "Save"
                 on_release:
-                    root.save_new()
+                    # root.save_new()
                     # Factory.SaveAsDialog().open()
-                    # root.check_if_saved()
+                    root.check_if_saved()
             Button:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
@@ -266,9 +263,7 @@
             text: "Yes"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
-            on_release:
-                Factory.MenuScreen().save_changes()
-                root.dismiss()
+            on_release: root.save_changes()
         Button:
             text: "No"
             size_hint: 0.5, 0.3
