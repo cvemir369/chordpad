@@ -35,6 +35,7 @@ con.close()
 
 
 class SaveAsDialog(Popup):  # save dialog popup
+
     def save_as(self):
         global current_pad_text
         try:
@@ -47,6 +48,9 @@ class SaveAsDialog(Popup):  # save dialog popup
             current_pad_text = text_to_save
             #treba da file_name postane chordpad's label text
             self.dismiss()
+            # self.ids.filename_label.text = file_name
+            # print(self.ids.filename_label.text)
+            # self.manager.current = "menu"
 
         except:
             self.ids.filename.hint_text = 'illegal filename'
