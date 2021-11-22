@@ -35,10 +35,8 @@
             text: "New chordpad"
             font_size: self.width/20
             on_release:
+                root.new_chordpad()
                 root.manager.current = "editing"
-                root.manager.get_screen("editing").ids.chordpad.text = ""
-                root.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
-                root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
         Button:
             id: back_to_chordpad
             size_hint: 1, 0.1

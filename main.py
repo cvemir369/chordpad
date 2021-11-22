@@ -33,6 +33,8 @@ con.close()
 # con.commit()
 # con.close()
 
+current_pad_text = ''
+
 
 class SaveAsDialog(Popup):  # save dialog popup
 
@@ -72,6 +74,7 @@ class SaveChangesDialog(Popup):
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
+        global current_pad_text
         self.ids.pads.clear_widgets()
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
@@ -99,20 +102,25 @@ class MenuScreen(Screen):  # main menu screen
         current_pad_text = cur.fetchone()[0]
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
         self.manager.get_screen("reading").ids.reading_label.text = current_pad_text
-        self.manager.current = "editing"
+        self.manager.current = "reading"
         con.close()
+
+    def new_chordpad(self):
+        global current_pad_text
+        current_pad_text = ''
+        self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
+        self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
+        self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
 
     def back_to_chordpad(self):  # set untitled if back to chordpad on start
         global current_pad_text
         try:
-            if current_pad_text != '':
-                pass
+            if current_pad_text == '':
+                self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
+                self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
+                self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
         except:
-            current_pad_text = ''
-            self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
-            self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
-            self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
-            
+            pass
 
     def set_filename_label(self):  # set label for the opened file as filename
         pass
