@@ -1,5 +1,4 @@
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
-#:import Factory kivy.factory.Factory
 # <Button>
 #     font_size: min(self.height-5, self.width/5.2)
 
@@ -29,12 +28,12 @@
             font_style: "Caption"
         Button:
             size_hint: 1, 0.1
-            text: "Back to Menu"
+            text: "Back to Main Menu"
             font_size: self.width/20
             on_release: root.manager.current = "menu"
         Button:
             size_hint: 1, 0.1
-            text: "Back to Chordpad"
+            text: "Back to Edit Mode"
             font_size: self.width/20
             on_release: root.manager.current = "editing"
         Button:
@@ -107,9 +106,13 @@
                 valign: "center"
                 font_size: self.width/15
         Button:
-            text: "Edit Mode"
+            text: "Edit Chordpad"
             size_hint: (1, 0.1)
             on_release: root.manager.current = "editing"
+        Button:
+            text: "Delete Chordpad"
+            size_hint: (1, 0.1)
+            on_release: root.delete_pad()
 
 <ChordpadScreen>
     name: "editing"
@@ -231,17 +234,10 @@
                 on_release: chordpad.insert_text(" (x4)")
             Button:
                 text: "New"
-                on_release:
-                    chordpad.text = ""
-                    filename_label.text = "Untitled - Chordpad"
-                    root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
-            Button:
-                text: "Delete"
-                on_release: root.delete_pad()
+                on_release: root.new_chordpad()
             Button:
                 text: "Save"
-                on_release:
-                    root.check_if_saved()
+                on_release: root.check_if_saved()
             Button:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
@@ -251,6 +247,9 @@
             Button:
                 text: "Redo"
                 on_release: chordpad.do_redo()
+            Button:
+                text: "Delete"
+                on_release: root.delete_pad()
 
 <SaveAsDialog>
     title: "Save As"

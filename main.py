@@ -39,7 +39,7 @@ current_pad_title = ''
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
-        global current_pad_text, current_pad_title
+        global current_pad_text, current_pad_title, current_pad_id
         file_name = self.ids.filename.text
         if file_name != '':
             con = sqlite3.connect("chordpad.db")
@@ -49,6 +49,7 @@ class SaveAsDialog(Popup):  # save dialog popup
             con.close()
             current_pad_text = text_to_save
             current_pad_title = file_name
+            current_pad_id = file_name
             self.dismiss()
             App.get_running_app().root.current = "success"
             App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
@@ -90,7 +91,6 @@ class DeletePadDialog(Popup):
         App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
         App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
 
-
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
@@ -126,9 +126,10 @@ class MenuScreen(Screen):  # main menu screen
         con.close()
 
     def new_chordpad(self):
-        global current_pad_text, current_pad_title
+        global current_pad_text, current_pad_id, current_pad_title
         current_pad_text = ''
-        current_pad_title = 'Untitled - Chordpad'
+        current_pad_id = ''
+        current_pad_title = "Untitled - Chordpad"
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
         self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
         self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
@@ -161,7 +162,7 @@ class ChordpadScreen(Screen):  # editing mode screen
             text_to_save = self.ids.chordpad.text
             SaveAsDialog().open()
 
-        elif current_pad_text != self.ids.chordpad.text:
+        elif current_pad_text != self.ids.chordpad.text and current_pad_id != '':
             text_to_save = self.ids.chordpad.text
             SaveChangesDialog().open()
 
@@ -169,11 +170,26 @@ class ChordpadScreen(Screen):  # editing mode screen
             self.manager.current = "menu"
 
     def delete_pad(self):
-        DeletePadDialog().open()
+        if current_pad_title != 'Untitled - Chordpad':
+            DeletePadDialog().open()
+        else:
+            pass
 
+    def new_chordpad(self):
+        global current_pad_text, current_pad_id, current_pad_title
+        current_pad_text = ''
+        current_pad_id = ''
+        current_pad_title = "Untitled - Chordpad"
+        self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
+        self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
+        self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
 
 class ReadingModeScreen(Screen):
-    pass
+    def delete_pad(self):
+        if current_pad_title != 'Untitled - Chordpad':
+            DeletePadDialog().open()
+        else:
+            pass
 
 
 class SuccessScreen(Screen):
