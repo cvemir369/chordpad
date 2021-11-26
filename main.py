@@ -1,7 +1,7 @@
 # temp rezolucija
 from kivy.config import Config
 Config.set('graphics', 'width', '400')
-Config.set('graphics', 'height', '650') #918
+Config.set('graphics', 'height', '918') #918 650
 
 import sqlite3
 import os
@@ -40,8 +40,6 @@ current_pad_title = ''
 class RenamePadDialog(Popup):
     def rename_chordpad(self):
         global current_pad_id, current_pad_title
-        print(current_pad_id)
-        print(current_pad_title)
         new_file_name = self.ids.rename_name.text
         if new_file_name != '':
             con = sqlite3.connect("chordpad.db")
@@ -59,6 +57,7 @@ class RenamePadDialog(Popup):
         else:
             self.ids.rename_name.hint_text = 'illegal filename'
             self.ids.rename_name.text = ''
+
 
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):

@@ -60,7 +60,7 @@
             size_hint_y: 0.8
             padding: [10,10,10,10]
         Button:
-            size_hint: 1, 0.1
+            size_hint: 1, 0.08
             text: "New chordpad"
             font_size: self.width/20
             on_release:
@@ -68,12 +68,17 @@
                 root.manager.current = "editing"
         Button:
             id: back_to_chordpad
-            size_hint: 1, 0.1
+            size_hint: 1, 0.08
             text: "Back to chordpad"
             font_size: self.width/20
             on_release:
                 root.back_to_chordpad()
                 root.manager.current = "editing"
+        # Button:
+        #     size_hint: 1, 0.08
+        #     text: "Quit"
+        #     font_size: self.width/20
+        #     on_release: app.stop()
 
 
 <ReadingModeScreen>
@@ -232,15 +237,12 @@
             Button:
                 text: "x4"
                 on_release: chordpad.insert_text(" (x4)")
-            # Button:
-            #     text: "New"
-            #     on_release: root.new_chordpad()
-            Button:
-                text: "Rename"
-                on_release: root.rename_chordpad()
             Button:
                 text: "Save"
                 on_release: root.check_if_saved()
+            Button:
+                text: "Rename"
+                on_release: root.rename_chordpad()
             Button:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
