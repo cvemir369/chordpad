@@ -22,7 +22,7 @@
         size: root.width, root.height
         Label:
             size_hint: (1, 0.7)
-            text: "Chordpad saved!"
+            text: "Success!"
             halign: "center"
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
@@ -236,10 +236,8 @@
                     filename_label.text = "Untitled - Chordpad"
                     root.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
             Button:
-                text: "Open"
-                on_release:
-                    root.check_if_saved()
-                    root.manager.current = "menu"
+                text: "Delete"
+                on_release: root.delete_pad()
             Button:
                 text: "Save"
                 on_release:
@@ -282,7 +280,7 @@
             on_release: root.dismiss()
 
 <SaveChangesDialog>
-    title: "Chordpad" # mozda da pise ime fajla?
+    title: "Save Changes To Chordpad" # mozda da pise ime fajla?
     size_hint: (0.8,0.2)
     auto_dismiss: False
     FloatLayout:
@@ -295,6 +293,26 @@
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
             on_release: root.save_changes()
+        Button:
+            text: "No"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.5, 'y':0.1}
+            on_release: root.dismiss()
+
+<DeletePadDialog>
+    title: "Delete Chordpad" # mozda da pise ime fajla?
+    size_hint: (0.8,0.2)
+    auto_dismiss: False
+    FloatLayout:
+        Label:
+            text: "Are you sure?"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.25, 'y':0.58}
+        Button:
+            text: "Yes"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0, 'y':0.1}
+            on_release: root.delete_pad()
         Button:
             text: "No"
             size_hint: 0.5, 0.3

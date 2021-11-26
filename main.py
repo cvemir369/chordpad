@@ -38,7 +38,6 @@ current_pad_title = ''
 
 
 class SaveAsDialog(Popup):  # save dialog popup
-
     def save_as(self):
         global current_pad_text, current_pad_title
         file_name = self.ids.filename.text
@@ -74,6 +73,24 @@ class SaveChangesDialog(Popup):
         App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
 
 
+class DeletePadDialog(Popup):
+    def delete_pad(self):
+        global current_pad_id, current_pad_title, current_pad_text
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute(''' DELETE FROM chordpad WHERE title = ? ''', (current_pad_id,))
+        con.commit()
+        con.close()
+        self.dismiss()
+        App.get_running_app().root.current = "success"
+        current_pad_title = 'Untitled - Chordpad'
+        current_pad_text = ''
+        App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
+        App.get_running_app().root.get_screen("editing").ids.chordpad.text = current_pad_text
+        App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+        App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+
+
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
@@ -92,7 +109,7 @@ class MenuScreen(Screen):  # main menu screen
         con.close()
 
     def return_button_id_on_press(self, instance):
-        global current_pad_text, current_pad_id
+        global current_pad_text, current_pad_id, current_pad_title
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         
@@ -150,6 +167,9 @@ class ChordpadScreen(Screen):  # editing mode screen
 
         else:
             self.manager.current = "menu"
+
+    def delete_pad(self):
+        DeletePadDialog().open()
 
 
 class ReadingModeScreen(Screen):
