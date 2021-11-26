@@ -37,6 +37,29 @@ current_pad_text = ''
 current_pad_title = ''
 
 
+class RenamePadDialog(Popup):
+    def rename_chordpad(self):
+        global current_pad_id, current_pad_title
+        print(current_pad_id)
+        print(current_pad_title)
+        new_file_name = self.ids.rename_name.text
+        if new_file_name != '':
+            con = sqlite3.connect("chordpad.db")
+            cur = con.cursor()
+            cur.execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
+                        (new_file_name, new_file_name, current_pad_id))
+            con.commit()
+            con.close()
+            current_pad_title = new_file_name
+            current_pad_id = new_file_name
+            self.dismiss()
+            App.get_running_app().root.current = "success"
+            App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+            App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+        else:
+            self.ids.rename_name.hint_text = 'illegal filename'
+            self.ids.rename_name.text = ''
+
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
         global current_pad_text, current_pad_title, current_pad_id
@@ -90,6 +113,7 @@ class DeletePadDialog(Popup):
         App.get_running_app().root.get_screen("editing").ids.chordpad.text = current_pad_text
         App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
         App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+
 
 class MenuScreen(Screen):  # main menu screen
     @mainthread
@@ -145,9 +169,6 @@ class MenuScreen(Screen):  # main menu screen
         except:
             pass
 
-    def set_filename_label(self):  # set label for the opened file as filename
-        pass
-
 
 class ChordpadScreen(Screen):  # editing mode screen
     def put_text(self, item):  # intro, verse, etc. auto enter ili ne
@@ -175,14 +196,9 @@ class ChordpadScreen(Screen):  # editing mode screen
         else:
             pass
 
-    def new_chordpad(self):
-        global current_pad_text, current_pad_id, current_pad_title
-        current_pad_text = ''
-        current_pad_id = ''
-        current_pad_title = "Untitled - Chordpad"
-        self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
-        self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
-        self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+    def rename_chordpad(self):
+        RenamePadDialog().open()
+
 
 class ReadingModeScreen(Screen):
     def delete_pad(self):

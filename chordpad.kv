@@ -232,9 +232,12 @@
             Button:
                 text: "x4"
                 on_release: chordpad.insert_text(" (x4)")
+            # Button:
+            #     text: "New"
+            #     on_release: root.new_chordpad()
             Button:
-                text: "New"
-                on_release: root.new_chordpad()
+                text: "Rename"
+                on_release: root.rename_chordpad()
             Button:
                 text: "Save"
                 on_release: root.check_if_saved()
@@ -314,6 +317,33 @@
             on_release: root.delete_pad()
         Button:
             text: "No"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0.5, 'y':0.1}
+            on_release: root.dismiss()
+
+<RenamePadDialog>
+    title: "Rename Chordpad"
+    size_hint: (0.8,0.2)
+    FloatLayout:
+        TextInput:
+            id: rename_name
+            focus: True
+            hint_text: "ime trenutnog chordpada??"
+            multiline: False
+            halign: "center"
+            valign: "center"
+            size_hint: 0.9, 0.3
+            pos_hint: {'x':0.05, 'y':0.55}
+            on_text_validate: root.rename_chordpad()
+        Button:
+            text: "Rename"
+            size_hint: 0.5, 0.3
+            pos_hint: {'x':0, 'y':0.1}
+            on_release: root.rename_chordpad()
+
+        Button:
+            id: cancel_pressed
+            text: "Cancel"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.5, 'y':0.1}
             on_release: root.dismiss()
