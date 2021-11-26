@@ -11,7 +11,37 @@
         name: "reading"
     ChordpadScreen:
         name: "editing"
+    SuccessScreen:
+        name: "success"
 
+
+<SuccessScreen>
+    name: "success"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        Label:
+            size_hint: (1, 0.7)
+            text: "Chordpad saved!"
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_style: "Caption"
+        Button:
+            size_hint: 1, 0.1
+            text: "Back to Menu"
+            font_size: self.width/20
+            on_release: root.manager.current = "menu"
+        Button:
+            size_hint: 1, 0.1
+            text: "Back to Chordpad"
+            font_size: self.width/20
+            on_release: root.manager.current = "editing"
+        Button:
+            size_hint: 1, 0.1
+            text: "Back to Reading Mode"
+            font_size: self.width/20
+            on_release: root.manager.current = "reading"
 
 <MenuScreen>
     name: "menu"
@@ -99,11 +129,12 @@
             size_hint: (1, 0.1)
             on_release:
                 root.check_if_saved()
-                # root.manager.current = "menu"
+                root.manager.current = "menu"
         Button:
             text: "Reading Mode"
             size_hint: (1, 0.1)
             on_release:
+                root.check_if_saved()
                 root.manager.current = "reading"
                 root.manager.get_screen("reading").ids.reading_label.text = chordpad.text
 

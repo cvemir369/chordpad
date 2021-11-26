@@ -34,27 +34,28 @@ con.close()
 # con.close()
 
 current_pad_text = ''
+current_pad_title = ''
 
 
 class SaveAsDialog(Popup):  # save dialog popup
 
     def save_as(self):
-        global current_pad_text
-        try:
-            file_name = self.ids.filename.text
+        global current_pad_text, current_pad_title
+        file_name = self.ids.filename.text
+        if file_name != '':
             con = sqlite3.connect("chordpad.db")
             cur = con.cursor()
             cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''', (file_name, file_name, text_to_save))
             con.commit()
             con.close()
             current_pad_text = text_to_save
-            #treba da file_name postane chordpad's label text
+            current_pad_title = file_name
             self.dismiss()
-            # self.ids.filename_label.text = file_name
-            # print(self.ids.filename_label.text)
-            # self.manager.current = "menu"
-
-        except:
+            App.get_running_app().root.current = "success"
+            App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
+            App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+            App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+        else:
             self.ids.filename.hint_text = 'illegal filename'
             self.ids.filename.text = ''
 
@@ -69,12 +70,14 @@ class SaveChangesDialog(Popup):
         con.close()
         current_pad_text = text_to_save
         self.dismiss()
+        App.get_running_app().root.current = "success"
+        App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
 
 
 class MenuScreen(Screen):  # main menu screen
     @mainthread
     def on_enter(self):
-        global current_pad_text
+        global current_pad_text, current_pad_title
         self.ids.pads.clear_widgets()
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
@@ -106,19 +109,21 @@ class MenuScreen(Screen):  # main menu screen
         con.close()
 
     def new_chordpad(self):
-        global current_pad_text
+        global current_pad_text, current_pad_title
         current_pad_text = ''
+        current_pad_title = 'Untitled - Chordpad'
         self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
-        self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
-        self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
+        self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
+        self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
 
     def back_to_chordpad(self):  # set untitled if back to chordpad on start
-        global current_pad_text
+        global current_pad_text, current_pad_title
         try:
             if current_pad_text == '':
+                current_pad_title = 'Untitled - Chordpad'
                 self.manager.get_screen("editing").ids.chordpad.text = current_pad_text
-                self.manager.get_screen("editing").ids.filename_label.text = "Untitled - Chordpad"
-                self.manager.get_screen("reading").ids.filename_rlabel.text = "Untitled - Chordpad"
+                self.manager.get_screen("editing").ids.filename_label.text = current_pad_title
+                self.manager.get_screen("reading").ids.filename_rlabel.text = current_pad_title
         except:
             pass
 
@@ -151,13 +156,17 @@ class ReadingModeScreen(Screen):
     pass
 
 
+class SuccessScreen(Screen):
+    pass
+
+
 class ScreenOrganize(ScreenManager):
     pass
 
 
 class ChordpadApp(App):
     def build(self):
-        return ScreenOrganize()
+        return ScreenOrganize()    
 
 
 if __name__ == '__main__':
