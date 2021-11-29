@@ -1,12 +1,11 @@
 # temp rezolucija
 from kivy.config import Config
 Config.set('graphics', 'width', '400')
-Config.set('graphics', 'height', '918') #918 650
+Config.set('graphics', 'height', '650') #918 650
 
 import sqlite3
 import os
 from kivy.uix.popup import Popup
-from kivy.uix.stacklayout import StackLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
