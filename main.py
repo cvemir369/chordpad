@@ -5,18 +5,20 @@ Config.set('graphics', 'height', '650') #918 650
 
 import sqlite3
 import os
+from kivy.clock import mainthread
+from kivy.app import App
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
-from kivy.uix.textinput import TextInput
-from kivy.uix.label import Label
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.layout import Layout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.stacklayout import StackLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.textinput import TextInput
+from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.app import App
-from kivy.clock import mainthread
+
 
 # create database file
 con = sqlite3.connect("chordpad.db")
@@ -41,22 +43,22 @@ class RenamePadDialog(Popup):
     def rename_chordpad(self):
         global current_pad_id, current_pad_title
         new_file_name = self.ids.rename_name.text
-        if new_file_name != '':
-            con = sqlite3.connect("chordpad.db")
-            cur = con.cursor()
-            cur.execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
-                        (new_file_name, new_file_name, current_pad_id))
-            con.commit()
-            con.close()
-            current_pad_title = new_file_name
-            current_pad_id = new_file_name
-            self.dismiss()
-            App.get_running_app().root.current = "success"
-            App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
-            App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+        if new_file_name.strip() == '':
+            new_file_name = 'Untitled Chordpad'
         else:
-            self.ids.rename_name.hint_text = 'illegal filename'
-            self.ids.rename_name.text = ''
+            pass
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
+                    (new_file_name, new_file_name, current_pad_id))
+        con.commit()
+        con.close()
+        current_pad_title = new_file_name
+        current_pad_id = new_file_name
+        self.dismiss()
+        App.get_running_app().root.current = "success"
+        App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+        App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
             
     def current_pad_title(self):
         current_pad = f'Rename {current_pad_id}'
@@ -70,23 +72,23 @@ class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
         global current_pad_text, current_pad_title, current_pad_id
         file_name = self.ids.filename.text
-        if file_name != '':
-            con = sqlite3.connect("chordpad.db")
-            cur = con.cursor()
-            cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''', (file_name, file_name, text_to_save))
-            con.commit()
-            con.close()
-            current_pad_text = text_to_save
-            current_pad_title = file_name
-            current_pad_id = file_name
-            self.dismiss()
-            App.get_running_app().root.current = "success"
-            App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
-            App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
-            App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+        if file_name.strip() == '':
+            file_name = 'Untitled Chordpad'
         else:
-            self.ids.filename.hint_text = 'illegal filename'
-            self.ids.filename.text = ''
+            pass
+        con = sqlite3.connect("chordpad.db")
+        cur = con.cursor()
+        cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''', (file_name, file_name, text_to_save))
+        con.commit()
+        con.close()
+        current_pad_text = text_to_save
+        current_pad_title = file_name
+        current_pad_id = file_name
+        self.dismiss()
+        App.get_running_app().root.current = "success"
+        App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
+        App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
+        App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
 
 
 class SaveChangesDialog(Popup):
@@ -137,10 +139,10 @@ class MenuScreen(Screen):  # main menu screen
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
         cur.execute(''' SELECT id, title, text FROM chordpad ''')
-        for item in cur.fetchall():
+        for item in reversed(cur.fetchall()):
             pad_id = str(item[0])
             pad_title = item[1]
-            button = Button(text=pad_title)
+            button = Button(text=pad_title, size_hint=(1, 0.1))
             self.ids.pads.add_widget(button)
             self.ids[pad_id] = button
             button.bind(on_release=self.return_button_id_on_press)

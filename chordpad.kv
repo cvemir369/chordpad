@@ -54,15 +54,21 @@
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
             font_style: "Caption"
-        GridLayout:
-            id: pads
-            cols: 1
-            size_hint_y: 0.8
-            padding: [10,10,10,10]
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            StackLayout:
+                id: pads
+                scroll_type: ['bars', 'content']
+                bar_width: 10
+                padding: [10,10,10,10]
+                size_hint: 1, None
+                size: root.width, root.height
+        Label: #empty separator
+            size_hint: 1, 0.01
         Button:
             size_hint: 1, 0.08
             text: "New chordpad"
-            font_size: self.width/20
             on_release:
                 root.new_chordpad()
                 root.manager.current = "editing"
@@ -70,16 +76,9 @@
             id: back_to_chordpad
             size_hint: 1, 0.08
             text: "Back to chordpad"
-            font_size: self.width/20
             on_release:
                 root.back_to_chordpad()
                 root.manager.current = "editing"
-        # Button:
-        #     size_hint: 1, 0.08
-        #     text: "Quit"
-        #     font_size: self.width/20
-        #     on_release: app.stop()
-
 
 <ReadingModeScreen>
     name: "reading"
@@ -161,6 +160,9 @@
                 font_size: self.width/15
                 auto_indent: True
                 background_color: (240/255, 240/255, 240/255, 1)
+                hint_text: "Empty Chordpad"
+                use_bubble: True
+                # use_handles: True
 
         GridLayout:
             cols: 6
@@ -304,7 +306,7 @@
             on_release: root.dismiss()
 
 <DeletePadDialog>
-    title: "Delete Chordpad" # mozda da pise ime fajla?
+    title: "Delete Chordpad"
     title: root.current_pad_title()
     size_hint: (0.8,0.2)
     auto_dismiss: False
@@ -332,6 +334,7 @@
             id: rename_name
             focus: True
             hint_text: root.rename_hint_text()
+            text: root.rename_hint_text()
             multiline: False
             halign: "center"
             valign: "center"
