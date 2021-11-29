@@ -154,14 +154,12 @@
             text: "Main Menu"
             size_hint: (1, 0.1)
             on_release:
-                root.check_if_saved()
-                root.manager.current = "menu"
+                root.check_if_saved("menu")
         ButtonAll:
             text: "Reading Mode"
             size_hint: (1, 0.1)
             on_release:
-                root.check_if_saved()
-                root.manager.current = "reading"
+                root.check_if_saved("reading")
                 root.manager.get_screen("reading").ids.reading_label.text = chordpad.text
 
         ScrollView:
@@ -260,7 +258,7 @@
                 on_release: chordpad.insert_text(" (x4)")
             ButtonKey:
                 text: "Save"
-                on_release: root.check_if_saved()
+                on_release: root.check_if_saved("editing")
             ButtonKey:
                 text: "Rename"
                 on_release: root.rename_chordpad()
