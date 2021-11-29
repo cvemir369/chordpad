@@ -35,6 +35,7 @@ con.close()
 
 current_pad_text = ''
 current_pad_title = ''
+current_pad_id = ''
 
 
 class RenamePadDialog(Popup):
@@ -57,6 +58,13 @@ class RenamePadDialog(Popup):
         else:
             self.ids.rename_name.hint_text = 'illegal filename'
             self.ids.rename_name.text = ''
+            
+    def current_pad_title(self):
+        current_pad = f'Rename {current_pad_id}'
+        return current_pad
+    
+    def rename_hint_text(self):
+        return current_pad_id
 
 
 class SaveAsDialog(Popup):  # save dialog popup
@@ -94,6 +102,10 @@ class SaveChangesDialog(Popup):
         self.dismiss()
         App.get_running_app().root.current = "success"
         App.get_running_app().root.get_screen("reading").ids.reading_label.text = current_pad_text
+        
+    def current_pad_title(self):
+        current_pad = f'Save changes to {current_pad_id}'
+        return current_pad
 
 
 class DeletePadDialog(Popup):
@@ -112,6 +124,10 @@ class DeletePadDialog(Popup):
         App.get_running_app().root.get_screen("editing").ids.chordpad.text = current_pad_text
         App.get_running_app().root.get_screen("reading").ids.filename_rlabel.text = current_pad_title
         App.get_running_app().root.get_screen("editing").ids.filename_label.text = current_pad_title
+        
+    def current_pad_title(self):
+        current_pad = f'Delete {current_pad_id}'
+        return current_pad
 
 
 class MenuScreen(Screen):  # main menu screen
@@ -182,29 +198,30 @@ class ChordpadScreen(Screen):  # editing mode screen
             text_to_save = self.ids.chordpad.text
             SaveAsDialog().open()
 
-        elif current_pad_text != self.ids.chordpad.text and current_pad_id != '':
+        elif current_pad_text != self.ids.chordpad.text:
             text_to_save = self.ids.chordpad.text
             SaveChangesDialog().open()
-
-        else:
-            self.manager.current = "menu"
-
-    def delete_pad(self):
-        if current_pad_title != 'Untitled - Chordpad':
-            DeletePadDialog().open()
         else:
             pass
 
-    def rename_chordpad(self):
-        RenamePadDialog().open()
+    def delete_pad(self):
+        if current_pad_title == 'Untitled - Chordpad':
+            pass
+        else:
+            DeletePadDialog().open()
 
+    def rename_chordpad(self):
+        if current_pad_title == 'Untitled - Chordpad':
+            pass
+        else:
+            RenamePadDialog().open()
 
 class ReadingModeScreen(Screen):
     def delete_pad(self):
-        if current_pad_title != 'Untitled - Chordpad':
-            DeletePadDialog().open()
-        else:
+        if current_pad_title == 'Untitled - Chordpad':
             pass
+        else:
+            DeletePadDialog().open()
 
 
 class SuccessScreen(Screen):
