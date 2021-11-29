@@ -1,7 +1,7 @@
 # temp rezolucija
 from kivy.config import Config
 Config.set('graphics', 'width', '400')
-Config.set('graphics', 'height', '650') #918 650
+Config.set('graphics', 'height', '918') #918 650
 
 import sqlite3
 import os
@@ -44,7 +44,7 @@ class RenamePadDialog(Popup):
         global current_pad_id, current_pad_title
         new_file_name = self.ids.rename_name.text
         if new_file_name.strip() == '':
-            new_file_name = 'Untitled Chordpad'
+            new_file_name = current_pad_title
         else:
             pass
         con = sqlite3.connect("chordpad.db")
@@ -142,7 +142,7 @@ class MenuScreen(Screen):  # main menu screen
         for item in reversed(cur.fetchall()):
             pad_id = str(item[0])
             pad_title = item[1]
-            button = Button(text=pad_title, size_hint=(1, 0.1))
+            button = Button(text=pad_title, size_hint=(1, 0.1), font_size=self.width/18)
             self.ids.pads.add_widget(button)
             self.ids[pad_id] = button
             button.bind(on_release=self.return_button_id_on_press)

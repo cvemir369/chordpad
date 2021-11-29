@@ -1,6 +1,22 @@
 #:import SwapTransition kivy.uix.screenmanager.SwapTransition
-# <Button>
-#     font_size: min(self.height-5, self.width/5.2)
+
+<TopLabel@Label>
+    font_size: min(self.height-5, self.width/25)
+
+<ButtonAll@Button>
+    font_size: min(self.height-5, self.width/15)
+
+<ButtonKey@Button>
+    font_size: min(self.height-5, self.width/4.2)
+
+<ButtonConfirm@Button>
+    font_size: min(self.height-5, self.width/10)
+
+<ConfirmTextInput@TextInput>
+    padding:
+        [0, self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0, 0]
+    font_size: min(root.height-5, root.width/16)
+
 
 <ScreenOrganize>:
     transition: SwapTransition()
@@ -26,28 +42,29 @@
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
             font_style: "Caption"
-        Button:
+        ButtonAll:
             size_hint: 1, 0.1
             text: "Back to Main Menu"
-            font_size: self.width/20
+            # font_size: self.width/20
             on_release: root.manager.current = "menu"
-        Button:
+        ButtonAll:
             size_hint: 1, 0.1
             text: "Back to Edit Mode"
-            font_size: self.width/20
+            # font_size: self.width/20
             on_release: root.manager.current = "editing"
-        Button:
+        ButtonAll:
             size_hint: 1, 0.1
             text: "Back to Reading Mode"
-            font_size: self.width/20
+            # font_size: self.width/20
             on_release: root.manager.current = "reading"
+
 
 <MenuScreen>
     name: "menu"
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
-        Label:
+        TopLabel:
             size_hint: (1, 0.05)
             text: "Chordpad by cvemir369"
             halign: "center"
@@ -66,13 +83,13 @@
                 size: root.width, root.height
         Label: #empty separator
             size_hint: 1, 0.01
-        Button:
+        ButtonAll:
             size_hint: 1, 0.08
             text: "New chordpad"
             on_release:
                 root.new_chordpad()
                 root.manager.current = "editing"
-        Button:
+        ButtonAll:
             id: back_to_chordpad
             size_hint: 1, 0.08
             text: "Back to chordpad"
@@ -80,20 +97,21 @@
                 root.back_to_chordpad()
                 root.manager.current = "editing"
 
+
 <ReadingModeScreen>
     name: "reading"
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
 
-        Label:
+        TopLabel:
             id: filename_rlabel
             size_hint: (1, 0.05)
             halign: "center"
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
             font_style: "Caption"
-        Button:
+        ButtonAll:
             text: "Main Menu"
             size_hint: (1, 0.1)
             on_release: root.manager.current = "menu"
@@ -108,15 +126,16 @@
                 size: self.texture_size
                 halign: "center"
                 valign: "center"
-                font_size: self.width/15
-        Button:
+                font_size: self.width/16
+        ButtonAll:
             text: "Edit Chordpad"
             size_hint: (1, 0.1)
             on_release: root.manager.current = "editing"
-        Button:
+        ButtonAll:
             text: "Delete Chordpad"
             size_hint: (1, 0.1)
             on_release: root.delete_pad()
+
 
 <ChordpadScreen>
     name: "editing"
@@ -124,20 +143,20 @@
         orientation: "vertical"
         size: root.width, root.height
 
-        Label:
+        TopLabel:
             id: filename_label
             size_hint: (1, 0.05)
             halign: "center"
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
             font_style: "Caption"
-        Button:
+        ButtonAll:
             text: "Main Menu"
             size_hint: (1, 0.1)
             on_release:
                 root.check_if_saved()
                 root.manager.current = "menu"
-        Button:
+        ButtonAll:
             text: "Reading Mode"
             size_hint: (1, 0.1)
             on_release:
@@ -167,102 +186,103 @@
         GridLayout:
             cols: 6
             size_hint: (1, 0.4)
-            Button:
+            ButtonKey:
                 text: "INTRO"
                 on_release: root.put_text("INTRO")
-            Button:
+            ButtonKey:
                 text: "VERSE"
                 on_release: root.put_text("VERSE")
-            Button:
+            ButtonKey:
                 text: "PRE-CH"
                 on_release: root.put_text("PRE-CHORUS")
-            Button:
+            ButtonKey:
                 text: "CHORUS"
                 on_release: root.put_text("CHORUS")
-            Button:
+            ButtonKey:
                 text: "BRIDGE"
                 on_release: root.put_text("BRIDGE")
-            Button:
+            ButtonKey:
                 text: "OUTRO"
                 on_release: root.put_text("OUTRO")
-            Button:
+            ButtonKey:
                 text: "B"
                 on_release: chordpad.insert_text(" B")
-            Button:
+            ButtonKey:
                 text: "C"
                 on_release: chordpad.insert_text(" C")
-            Button:
+            ButtonKey:
                 text: "C#"
                 on_release: chordpad.insert_text(" C#")
-            Button:
+            ButtonKey:
                 text: "D"
                 on_release: chordpad.insert_text(" D")
-            Button:
+            ButtonKey:
                 text: "D#"
                 on_release: chordpad.insert_text(" D#")
-            Button:
+            ButtonKey:
                 text: "E"
                 on_release: chordpad.insert_text(" E")
-            Button:
+            ButtonKey:
                 text: "F"
                 on_release: chordpad.insert_text(" F")
-            Button:
+            ButtonKey:
                 text: "F#"
                 on_release: chordpad.insert_text(" F#")
-            Button:
+            ButtonKey:
                 text: "G"
                 on_release: chordpad.insert_text(" G")
-            Button:
+            ButtonKey:
                 text: "G#"
                 on_release: chordpad.insert_text(" G#")
-            Button:
+            ButtonKey:
                 text: "A"
                 on_release: chordpad.insert_text(" A")
-            Button:
+            ButtonKey:
                 text: "A#"
                 on_release: chordpad.insert_text(" A#")
-            Button:
+            ButtonKey:
                 text: "7"
                 on_release: chordpad.insert_text("7")
-            Button:
+            ButtonKey:
                 text: "m"
                 on_release: chordpad.insert_text("m")
-            Button:
+            ButtonKey:
                 text: "m7"
                 on_release: chordpad.insert_text("m7")
-            Button:
+            ButtonKey:
                 text: "x2"
                 on_release: chordpad.insert_text(" (x2)")
-            Button:
+            ButtonKey:
                 text: "x3"
                 on_release: chordpad.insert_text(" (x3)")
-            Button:
+            ButtonKey:
                 text: "x4"
                 on_release: chordpad.insert_text(" (x4)")
-            Button:
+            ButtonKey:
                 text: "Save"
                 on_release: root.check_if_saved()
-            Button:
+            ButtonKey:
                 text: "Rename"
                 on_release: root.rename_chordpad()
-            Button:
+            ButtonKey:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
-            Button:
+            ButtonKey:
                 text: "Undo"
                 on_release: chordpad.do_undo()
-            Button:
+            ButtonKey:
                 text: "Redo"
                 on_release: chordpad.do_redo()
-            Button:
+            ButtonKey:
                 text: "Delete"
                 on_release: root.delete_pad()
+
 
 <SaveAsDialog>
     title: "Save As"
     size_hint: (0.8,0.2)
     FloatLayout:
-        TextInput:
+        ConfirmTextInput:
             id: filename
             focus: True
             hint_text: "Untitled Chordpad"
@@ -272,18 +292,18 @@
             size_hint: 0.9, 0.3
             pos_hint: {'x':0.05, 'y':0.55}
             on_text_validate: root.save_as()
-        Button:
+        ButtonConfirm:
             text: "Save"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
             on_release: root.save_as()
-
-        Button:
+        ButtonConfirm:
             id: cancel_pressed
             text: "Discard"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.5, 'y':0.1}
             on_release: root.dismiss()
+
 
 <SaveChangesDialog>
     title: root.current_pad_title()
@@ -294,19 +314,20 @@
             text: "Save Changes?"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.25, 'y':0.58}
-        Button:
+            font_size: min(self.height-5, self.width/8)
+        ButtonConfirm:
             text: "Yes"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
             on_release: root.save_changes()
-        Button:
+        ButtonConfirm:
             text: "No"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.5, 'y':0.1}
             on_release: root.dismiss()
 
+
 <DeletePadDialog>
-    title: "Delete Chordpad"
     title: root.current_pad_title()
     size_hint: (0.8,0.2)
     auto_dismiss: False
@@ -315,39 +336,40 @@
             text: "Are you sure?"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.25, 'y':0.58}
-        Button:
+            font_size: min(self.height-5, self.width/8)
+        ButtonConfirm:
             text: "Yes"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
             on_release: root.delete_pad()
-        Button:
+        ButtonConfirm:
             text: "No"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0.5, 'y':0.1}
             on_release: root.dismiss()
 
+
 <RenamePadDialog>
     title: root.current_pad_title()
     size_hint: (0.8,0.2)
     FloatLayout:
-        TextInput:
+        ConfirmTextInput:
             id: rename_name
             focus: True
-            hint_text: root.rename_hint_text()
+            # hint_text: root.rename_hint_text()
             text: root.rename_hint_text()
             multiline: False
             halign: "center"
             valign: "center"
             size_hint: 0.9, 0.3
-            pos_hint: {'x':0.05, 'y':0.55}
+            pos_hint: {'x':0.05, 'y':0.58}
             on_text_validate: root.rename_chordpad()
-        Button:
+        ButtonConfirm:
             text: "Rename"
             size_hint: 0.5, 0.3
             pos_hint: {'x':0, 'y':0.1}
             on_release: root.rename_chordpad()
-
-        Button:
+        ButtonConfirm:
             id: cancel_pressed
             text: "Cancel"
             size_hint: 0.5, 0.3
