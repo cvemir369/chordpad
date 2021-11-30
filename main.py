@@ -3,6 +3,7 @@ from kivy.config import Config
 Config.set('graphics', 'width', '400')
 Config.set('graphics', 'height', '918')  # 918 650
 
+from kivy.core.text import LabelBase
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
@@ -19,6 +20,9 @@ from kivy.clock import mainthread
 import os
 import sqlite3
 
+
+LabelBase.register(name='regular', fn_regular='OpenSans-Regular.ttf')
+LabelBase.register(name='bold', fn_regular='OpenSans-Bold.ttf')
 
 # create database file
 con = sqlite3.connect("chordpad.db")
@@ -157,7 +161,7 @@ class MenuScreen(Screen):  # main menu screen
             pad_id = str(item[0])
             pad_title = item[1]
             button = Button(text=pad_title, size_hint=(
-                1, 0.1), font_size=self.width/18)
+                1, 0.1), font_size=self.width/18, font_name="regular")
             self.ids.pads.add_widget(button)
             self.ids[pad_id] = button
             button.bind(on_release=self.return_button_id_on_press)
