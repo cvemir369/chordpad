@@ -22,14 +22,20 @@ Builder.load_file('main.kv', encoding='utf8')
 LabelBase.register(name='regular', fn_regular='OpenSans-Regular.ttf')
 LabelBase.register(name='bold', fn_regular='OpenSans-Bold.ttf')
 
+
+def db_execute(*args):  # executing sqlite db
+    con = sqlite3.connect("chordpad.db")
+    cur = con.cursor()
+    cur.execute(*args)
+    con.commit()
+    con.close()
+
+
 # create database file
-con = sqlite3.connect("chordpad.db")
-cur = con.cursor()
-cur.execute(
+db_execute(
     '''CREATE TABLE IF NOT EXISTS chordpad (
         id TEXT NOT NULL, title TEXT NOT NULL, text TEXT)''')
-con.commit()
-con.close()
+
 
 current_pad_text = ''
 current_pad_title = ''
@@ -44,12 +50,8 @@ class RenamePadDialog(Popup):
             new_file_name = current_pad_title
         else:
             pass
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
-                    (new_file_name, new_file_name, current_pad_id))
-        con.commit()
-        con.close()
+        db_execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
+                   (new_file_name, new_file_name, current_pad_id))
         current_pad_title = new_file_name
         current_pad_id = new_file_name
         self.dismiss()
@@ -74,12 +76,8 @@ class SaveAsDialog(Popup):  # save dialog popup
             file_name = 'Untitled Chordpad'
         else:
             pass
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''',
-                    (file_name, file_name, text_to_save))
-        con.commit()
-        con.close()
+        db_execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''',
+                   (file_name, file_name, text_to_save))
         current_pad_text = text_to_save
         current_pad_title = file_name
         current_pad_id = file_name
@@ -96,12 +94,8 @@ class SaveAsDialog(Popup):  # save dialog popup
 class SaveChangesDialog(Popup):
     def save_changes(self):
         global current_pad_text
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute(''' UPDATE chordpad SET text = ? WHERE id = ? ''',
-                    (text_to_save, current_pad_id))
-        con.commit()
-        con.close()
+        db_execute(''' UPDATE chordpad SET text = ? WHERE id = ? ''',
+                   (text_to_save, current_pad_id))
         current_pad_text = text_to_save
         self.dismiss()
         App.get_running_app().root.get_screen(
@@ -115,12 +109,8 @@ class SaveChangesDialog(Popup):
 class DeletePadDialog(Popup):
     def delete_pad(self):
         global current_pad_id, current_pad_title, current_pad_text
-        con = sqlite3.connect("chordpad.db")
-        cur = con.cursor()
-        cur.execute(''' DELETE FROM chordpad WHERE title = ? ''',
-                    (current_pad_id,))
-        con.commit()
-        con.close()
+        db_execute(''' DELETE FROM chordpad WHERE title = ? ''',
+                   (current_pad_id,))
         self.dismiss()
         App.get_running_app().root.current = "menu"
         current_pad_title = 'Untitled - Chordpad'
@@ -150,7 +140,8 @@ class MenuScreen(Screen):  # main menu screen
         for item in reversed(cur.fetchall()):
             pad_id = str(item[0])
             pad_title = item[1]
-            button = Button(text=pad_title)
+            button = Button(text=pad_title, size_hint=(
+                1, 0.07), font_size=self.width/20)
             self.ids.pads.add_widget(button)
             self.ids[pad_id] = button
             button.bind(on_release=self.return_button_id_on_press)
@@ -160,7 +151,6 @@ class MenuScreen(Screen):  # main menu screen
         global current_pad_text, current_pad_id, current_pad_title
         con = sqlite3.connect("chordpad.db")
         cur = con.cursor()
-
         cur.execute(''' SELECT ? FROM chordpad''', (instance.text,))
         current_pad_title = cur.fetchone()[0]
         current_pad_id = list(self.ids.keys())[
