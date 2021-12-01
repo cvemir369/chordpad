@@ -2,27 +2,48 @@
 
 <TextInput>
     font_name: "regular"
+    input_type: "text"
+    padding: [10, 6, 10, 6]
 
 <Label>
     font_name: "regular"
 
 <Button>
-    font_name: "bold"
+    font_name: "regular"
+    size_hint: (1, 0.07)
+    font_size: min(self.height-5, self.width/20)
+    background_color: [0.7,0.7,0.7,1]
 
 <TopLabel@Label>
+    font_name: "bold"
     font_size: min(self.height-5, self.width/25)
 
 <ButtonAll@Button>
     font_size: min(self.height-5, self.width/15)
+    font_name: "bold"
+    background_color: [0.5,0.5,0.5,1]
+
+<ButtonSongParts@Button>
+    font_size: min(self.height-5, self.width/5)
+    font_name: "bold"
+    background_color: [0.3,0.3,0.3,1]
 
 <ButtonKey@Button>
     font_size: min(self.height-5, self.width/4.2)
-    font_name: "regular"
+    font_name: "bold"
+    background_color: [0.7,0.7,0.7,1]
+
+<ButtonFunctions@Button>
+    font_size: min(self.height-5, self.width/5)
+    font_name: "bold"
+    background_color: [0.3,0.3,0.3,1]
 
 <ButtonConfirm@Button>
     font_size: min(self.height-5, self.width/10)
+    background_color: [0.5,0.5,0.5,1]
 
 <ConfirmTextInput@TextInput>
+    input_type: "text"
     padding:
         [0, self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0, 0]
     font_size: min(root.height-5, root.width/16)
@@ -36,37 +57,6 @@
         name: "reading"
     ChordpadScreen:
         name: "editing"
-    SuccessScreen:
-        name: "success"
-
-
-<SuccessScreen>
-    name: "success"
-    BoxLayout:
-        orientation: "vertical"
-        size: root.width, root.height
-        Label:
-            size_hint: (1, 0.7)
-            text: "Success!"
-            halign: "center"
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
-            font_style: "Caption"
-        ButtonAll:
-            size_hint: 1, 0.1
-            text: "Back to Main Menu"
-            # font_size: self.width/20
-            on_release: root.manager.current = "menu"
-        ButtonAll:
-            size_hint: 1, 0.1
-            text: "Back to Edit Mode"
-            # font_size: self.width/20
-            on_release: root.manager.current = "editing"
-        ButtonAll:
-            size_hint: 1, 0.1
-            text: "Back to Reading Mode"
-            # font_size: self.width/20
-            on_release: root.manager.current = "reading"
 
 
 <MenuScreen>
@@ -78,9 +68,6 @@
             size_hint: (1, 0.05)
             text: "Chordpad by cvemir369"
             halign: "center"
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
-            font_style: "Caption"
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
@@ -88,7 +75,7 @@
                 id: pads
                 scroll_type: ['bars', 'content']
                 bar_width: 10
-                padding: [10,10,10,10]
+                padding: [10,10,10,100]
                 size_hint: 1, None
                 size: root.width, root.height
         Label: #empty separator
@@ -113,14 +100,10 @@
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
-
         TopLabel:
             id: filename_rlabel
             size_hint: (1, 0.05)
             halign: "center"
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
-            font_style: "Caption"
         ButtonAll:
             text: "Main Menu"
             size_hint: (1, 0.1)
@@ -135,10 +118,11 @@
                 size_hint: 1, None
                 size: self.texture_size
                 text_size: root.width, None
+                padding_x: 10
+                padding_y: 10
                 halign: "center"
                 valign: "center"
                 font_size: self.width/16
-                
         ButtonAll:
             text: "Edit Chordpad"
             size_hint: (1, 0.1)
@@ -154,14 +138,10 @@
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
-
         TopLabel:
             id: filename_label
             size_hint: (1, 0.05)
             halign: "center"
-            theme_text_color: "Custom"
-            text_color: 1, 1, 1, 1
-            font_style: "Caption"
         ButtonAll:
             text: "Main Menu"
             size_hint: (1, 0.1)
@@ -173,7 +153,6 @@
             on_release:
                 root.check_if_saved("reading")
                 root.manager.get_screen("reading").ids.reading_label.text = chordpad.text
-
         ScrollView:
             id: scrlv
             do_scroll_x: False
@@ -190,28 +169,25 @@
                 auto_indent: True
                 background_color: (240/255, 240/255, 240/255, 1)
                 hint_text: "Empty Chordpad"
-                use_bubble: True
-                # use_handles: True
-
         GridLayout:
             cols: 6
             size_hint: (1, 0.4)
-            ButtonKey:
+            ButtonSongParts:
                 text: "INTRO"
                 on_release: root.put_text("INTRO")
-            ButtonKey:
+            ButtonSongParts:
                 text: "VERSE"
                 on_release: root.put_text("VERSE")
-            ButtonKey:
+            ButtonSongParts:
                 text: "PRE-CH"
                 on_release: root.put_text("PRE-CHORUS")
-            ButtonKey:
+            ButtonSongParts:
                 text: "CHORUS"
                 on_release: root.put_text("CHORUS")
-            ButtonKey:
+            ButtonSongParts:
                 text: "BRIDGE"
                 on_release: root.put_text("BRIDGE")
-            ButtonKey:
+            ButtonSongParts:
                 text: "OUTRO"
                 on_release: root.put_text("OUTRO")
             ButtonKey:
@@ -268,24 +244,28 @@
             ButtonKey:
                 text: "x4"
                 on_release: chordpad.insert_text(" (x4)")
-            ButtonKey:
+            ButtonFunctions:
+                text: "Delete"
+                background_color: [1,0.5,0.5,1]
+                background_down: ""
+                on_release: root.delete_pad()
+            ButtonFunctions:
                 text: "Save"
                 on_release: root.check_if_saved("editing")
-            ButtonKey:
+            ButtonFunctions:
                 text: "Rename"
                 on_release: root.rename_chordpad()
-            ButtonKey:
+            ButtonFunctions:
+                text: "Undo"
+                background_color: [0.3,0.3,0.3,1]
+                on_release: chordpad.do_undo()
+            ButtonFunctions:
+                text: "Redo"
+                background_color: [0.3,0.3,0.3,1]
+                on_release: chordpad.do_redo()
+            ButtonFunctions:
                 text: "Enter"
                 on_release: chordpad.insert_text("\n")
-            ButtonKey:
-                text: "Undo"
-                on_release: chordpad.do_undo()
-            ButtonKey:
-                text: "Redo"
-                on_release: chordpad.do_redo()
-            ButtonKey:
-                text: "Delete"
-                on_release: root.delete_pad()
 
 
 <SaveAsDialog>
@@ -366,7 +346,6 @@
         ConfirmTextInput:
             id: rename_name
             focus: True
-            # hint_text: root.rename_hint_text()
             text: root.rename_hint_text()
             multiline: False
             halign: "center"

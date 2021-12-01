@@ -1,8 +1,3 @@
-# temp rezolucija
-from kivy.config import Config
-Config.set('graphics', 'width', '400')
-Config.set('graphics', 'height', '918')  # 918 650
-
 from kivy.core.text import LabelBase
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -19,7 +14,10 @@ from kivy.app import App
 from kivy.clock import mainthread
 import os
 import sqlite3
+from kivy.lang import Builder
 
+
+Builder.load_file('main.kv', encoding='utf8')
 
 LabelBase.register(name='regular', fn_regular='OpenSans-Regular.ttf')
 LabelBase.register(name='bold', fn_regular='OpenSans-Bold.ttf')
@@ -28,16 +26,10 @@ LabelBase.register(name='bold', fn_regular='OpenSans-Bold.ttf')
 con = sqlite3.connect("chordpad.db")
 cur = con.cursor()
 cur.execute(
-    '''CREATE TABLE IF NOT EXISTS chordpad (id TEXT NOT NULL, title TEXT NOT NULL, text TEXT)''')
+    '''CREATE TABLE IF NOT EXISTS chordpad (
+        id TEXT NOT NULL, title TEXT NOT NULL, text TEXT)''')
 con.commit()
 con.close()
-
-# # create db item
-# con = sqlite3.connect("chordpad.db")
-# cur = con.cursor()
-# cur.execute(''' INSERT INTO chordpad (title, text) VALUES ('chordpad#2', 'C# D E') ''')
-# con.commit()
-# con.close()
 
 current_pad_text = ''
 current_pad_title = ''
@@ -61,7 +53,6 @@ class RenamePadDialog(Popup):
         current_pad_title = new_file_name
         current_pad_id = new_file_name
         self.dismiss()
-        App.get_running_app().root.current = "success"
         App.get_running_app().root.get_screen(
             "reading").ids.filename_rlabel.text = current_pad_title
         App.get_running_app().root.get_screen(
@@ -93,7 +84,7 @@ class SaveAsDialog(Popup):  # save dialog popup
         current_pad_title = file_name
         current_pad_id = file_name
         self.dismiss()
-        App.get_running_app().root.current = "success"
+        App.get_running_app().root.get_screen("menu").on_enter()
         App.get_running_app().root.get_screen(
             "reading").ids.reading_label.text = current_pad_text
         App.get_running_app().root.get_screen(
@@ -113,7 +104,6 @@ class SaveChangesDialog(Popup):
         con.close()
         current_pad_text = text_to_save
         self.dismiss()
-        App.get_running_app().root.current = "success"
         App.get_running_app().root.get_screen(
             "reading").ids.reading_label.text = current_pad_text
 
@@ -132,7 +122,7 @@ class DeletePadDialog(Popup):
         con.commit()
         con.close()
         self.dismiss()
-        App.get_running_app().root.current = "success"
+        App.get_running_app().root.current = "menu"
         current_pad_title = 'Untitled - Chordpad'
         current_pad_text = ''
         App.get_running_app().root.get_screen(
@@ -160,8 +150,7 @@ class MenuScreen(Screen):  # main menu screen
         for item in reversed(cur.fetchall()):
             pad_id = str(item[0])
             pad_title = item[1]
-            button = Button(text=pad_title, size_hint=(
-                1, 0.1), font_size=self.width/18, font_name="regular")
+            button = Button(text=pad_title)
             self.ids.pads.add_widget(button)
             self.ids[pad_id] = button
             button.bind(on_release=self.return_button_id_on_press)
@@ -255,10 +244,6 @@ class ReadingModeScreen(Screen):
             pass
         else:
             DeletePadDialog().open()
-
-
-class SuccessScreen(Screen):
-    pass
 
 
 class ScreenOrganize(ScreenManager):
