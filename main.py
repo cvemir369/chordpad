@@ -1,3 +1,8 @@
+# temp rezolucija
+from kivy.config import Config
+Config.set('graphics', 'width', '400')
+Config.set('graphics', 'height', '918')  # 918 650
+
 from sqlite3.dbapi2 import IntegrityError
 from kivy.core.text import LabelBase
 from kivy.uix.button import Button
@@ -62,7 +67,7 @@ class RenamePadDialog(Popup):
             App.get_running_app().root.get_screen(
                 "editing").ids.filename_label.text = current_pad_title
         except IntegrityError:
-            self.ids.rename_name.hint_text = "Illegal name, already exists..."
+            self.ids.rename_name.hint_text = "Error, file name already exists!"
             self.ids.rename_name.text = ''
             self.ids.rename_name.focus = True
 
@@ -97,7 +102,7 @@ class SaveAsDialog(Popup):  # save dialog popup
             App.get_running_app().root.get_screen(
                 "editing").ids.filename_label.text = current_pad_title
         except IntegrityError:
-            self.ids.filename.hint_text = "Illegal name, already exists..."
+            self.ids.filename.hint_text = "Error, file name already exists!"
             self.ids.filename.text = ''
             self.ids.filename.focus = True
 
