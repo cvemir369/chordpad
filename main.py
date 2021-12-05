@@ -1,26 +1,21 @@
-# temp rezolucija
-from kivy.config import Config
-Config.set('graphics', 'width', '400')
-Config.set('graphics', 'height', '918')  # 918 650
-
-from sqlite3.dbapi2 import IntegrityError
-from kivy.core.text import LabelBase
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.layout import Layout
-from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
-from kivy.uix.popup import Popup
-from kivy.app import App
-from kivy.clock import mainthread
-import os
-import sqlite3
 from kivy.lang import Builder
+import sqlite3
+import os
+from kivy.clock import mainthread
+from kivy.app import App
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
+from kivy.uix.layout import Layout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.stacklayout import StackLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.textinput import TextInput
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.core.text import LabelBase
+from sqlite3.dbapi2 import IntegrityError
 
 
 Builder.load_file('main.kv', encoding='utf8')
@@ -51,23 +46,24 @@ current_pad_id = ''
 class RenamePadDialog(Popup):
     def rename_chordpad(self):
         global current_pad_id, current_pad_title
-        new_file_name = self.ids.rename_name.text
-        if new_file_name.strip() == '':
-            new_file_name = current_pad_title
-        else:
-            pass
+        new_file_name = self.ids.rename_name.text.strip()
         try:
-            db_execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
-                    (new_file_name, new_file_name, current_pad_id))
-            current_pad_title = new_file_name
-            current_pad_id = new_file_name
-            self.dismiss()
-            App.get_running_app().root.get_screen(
-                "reading").ids.filename_rlabel.text = current_pad_title
-            App.get_running_app().root.get_screen(
-                "editing").ids.filename_label.text = current_pad_title
+            if new_file_name == '':
+                self.ids.rename_name.hint_text = "Illegal name!"
+                self.ids.rename_name.text = ''
+                self.ids.rename_name.focus = True
+            else:
+                db_execute('''UPDATE chordpad SET id = ?, title = ? WHERE id = ?''',
+                           (new_file_name, new_file_name, current_pad_id))
+                current_pad_title = new_file_name
+                current_pad_id = new_file_name
+                self.dismiss()
+                App.get_running_app().root.get_screen(
+                    "reading").ids.filename_rlabel.text = current_pad_title
+                App.get_running_app().root.get_screen(
+                    "editing").ids.filename_label.text = current_pad_title
         except IntegrityError:
-            self.ids.rename_name.hint_text = "Error, file name already exists!"
+            self.ids.rename_name.hint_text = "Name already exists!"
             self.ids.rename_name.text = ''
             self.ids.rename_name.focus = True
 
@@ -82,29 +78,31 @@ class RenamePadDialog(Popup):
 class SaveAsDialog(Popup):  # save dialog popup
     def save_as(self):
         global current_pad_text, current_pad_title, current_pad_id
-        file_name = self.ids.filename.text
-        if file_name.strip() == '':
-            file_name = 'Untitled Chordpad'
-        else:
-            pass
+        file_name = self.ids.filename.text.strip()
         try:
-            db_execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''',
-                    (file_name, file_name, text_to_save))
-            current_pad_text = text_to_save
-            current_pad_title = file_name
-            current_pad_id = file_name
-            self.dismiss()
-            App.get_running_app().root.get_screen("menu").on_enter()
-            App.get_running_app().root.get_screen(
-                "reading").ids.reading_label.text = current_pad_text
-            App.get_running_app().root.get_screen(
-                "reading").ids.filename_rlabel.text = current_pad_title
-            App.get_running_app().root.get_screen(
-                "editing").ids.filename_label.text = current_pad_title
+            if file_name == '':
+                self.ids.filename.hint_text = "Illegal name!"
+                self.ids.filename.text = ''
+                self.ids.filename.focus = True
+            else:
+                db_execute('''INSERT INTO chordpad (id, title, text) VALUES (?, ?, ?)''',
+                           (file_name, file_name, text_to_save))
+                current_pad_text = text_to_save
+                current_pad_title = file_name
+                current_pad_id = file_name
+                self.dismiss()
+                App.get_running_app().root.get_screen("menu").on_enter()
+                App.get_running_app().root.get_screen(
+                    "reading").ids.reading_label.text = current_pad_text
+                App.get_running_app().root.get_screen(
+                    "reading").ids.filename_rlabel.text = current_pad_title
+                App.get_running_app().root.get_screen(
+                    "editing").ids.filename_label.text = current_pad_title
         except IntegrityError:
-            self.ids.filename.hint_text = "Error, file name already exists!"
+            self.ids.filename.hint_text = "Name already exists!"
             self.ids.filename.text = ''
             self.ids.filename.focus = True
+
 
 class SaveChangesDialog(Popup):
     def save_changes(self):
