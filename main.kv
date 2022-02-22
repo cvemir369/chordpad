@@ -192,58 +192,64 @@
                 on_release: root.put_text("OUTRO")
             ButtonKey:
                 text: "B"
-                on_release: chordpad.insert_text(" B")
+                on_release: root.put_chord("B")
             ButtonKey:
                 text: "C"
-                on_release: chordpad.insert_text(" C")
+                on_release: root.put_chord("C")
             ButtonKey:
                 text: "C#"
-                on_release: chordpad.insert_text(" C#")
+                on_release: root.put_chord("C#")
             ButtonKey:
                 text: "D"
-                on_release: chordpad.insert_text(" D")
+                on_release: root.put_chord("D")
             ButtonKey:
                 text: "D#"
-                on_release: chordpad.insert_text(" D#")
+                on_release: root.put_chord("D#")
             ButtonKey:
                 text: "E"
-                on_release: chordpad.insert_text(" E")
+                on_release: root.put_chord("E")
             ButtonKey:
                 text: "F"
-                on_release: chordpad.insert_text(" F")
+                on_release: root.put_chord("F")
             ButtonKey:
                 text: "F#"
-                on_release: chordpad.insert_text(" F#")
+                on_release: root.put_chord("F#")
             ButtonKey:
                 text: "G"
-                on_release: chordpad.insert_text(" G")
+                on_release: root.put_chord("G")
             ButtonKey:
                 text: "G#"
-                on_release: chordpad.insert_text(" G#")
+                on_release: root.put_chord("G#")
             ButtonKey:
                 text: "A"
-                on_release: chordpad.insert_text(" A")
+                on_release: root.put_chord("A")
             ButtonKey:
                 text: "A#"
-                on_release: chordpad.insert_text(" A#")
+                on_release: root.put_chord("A#")
             ButtonKey:
                 text: "7"
-                on_release: chordpad.insert_text("7")
+                on_release:
+                    chordpad.do_backspace()
+                    root.put_chord("7")
             ButtonKey:
                 text: "m"
-                on_release: chordpad.insert_text("m")
+                on_release:
+                    chordpad.do_backspace()
+                    root.put_chord("m")
             ButtonKey:
                 text: "m7"
-                on_release: chordpad.insert_text("m7")
+                on_release:
+                    chordpad.do_backspace()
+                    root.put_chord("m7")
             ButtonKey:
                 text: "x2"
-                on_release: chordpad.insert_text(" (x2)")
+                on_release: root.put_chord("(x2)")
             ButtonKey:
                 text: "x3"
-                on_release: chordpad.insert_text(" (x3)")
+                on_release: root.put_chord("(x3)")
             ButtonKey:
                 text: "x4"
-                on_release: chordpad.insert_text(" (x4)")
+                on_release: root.put_chord("(x4)")
             ButtonFunctions:
                 text: "Delete"
                 background_color: [1,0.5,0.5,1]
@@ -265,7 +271,10 @@
                 on_release: chordpad.do_redo()
             ButtonFunctions:
                 text: "Enter"
-                on_release: chordpad.insert_text("\n")
+                on_release:
+                    chordpad.do_backspace()
+                    chordpad.insert_text("\n")
+                    # chordpad.do_cursor_movement('cursor_home')
 
 
 <SaveAsDialog>
