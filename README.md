@@ -6,24 +6,4 @@ App includes multiple screens (reading and editing mode) and full CRUD functiona
 
 #### Sample pad example:
 
-INTRO: C G Am F (x2)
-
-VERSE:  C Am (x4)
-
-PRE-CHORUS:  G (x2)
-
-CHORUS:  Em F C G (x3) A7
-
-VERSE:  C Am (x4)
-
-PRE-CHORUS:  G (x2)
-
-CHORUS:  Em F C G (x3) A7
-
-BRIDGE:  C# B A
-
-PRE-CHORUS:  G (x2)
-
-CHORUS:  Em F C G (x3) A7
-
-OUTRO:  C G Am F (x2)
+![Chordpad Screenshot](chordpad_1.jpg)
