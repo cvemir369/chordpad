@@ -6,8 +6,5 @@ name = "pypi"
 [packages]
 kivy = "*"
 
-[dev-packages]
-autopep8 = "*"
-
 [requires]
 python_version = "3.8.10"

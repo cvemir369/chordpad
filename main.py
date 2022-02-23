@@ -1,6 +1,5 @@
 from kivy.lang import Builder
 import sqlite3
-import os
 from kivy.clock import mainthread
 from kivy.app import App
 from kivy.uix.popup import Popup
@@ -216,10 +215,7 @@ class ChordpadScreen(Screen):  # editing mode screen
             self.ids.chordpad.insert_text(f"\n{item}: ")
 
     def put_chord(self, item):
-        if self.ids.chordpad.text == "":
-            self.ids.chordpad.insert_text(f"{item}")
-        else:
-            self.ids.chordpad.insert_text(f"{item} ")
+        self.ids.chordpad.insert_text(f"{item} ")
 
     def check_if_saved(self, change_screen):
         global text_to_save
