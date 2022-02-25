@@ -207,7 +207,7 @@ class MenuScreen(Screen):  # main menu screen
 
 
 class ChordpadScreen(Screen):  # editing mode screen
-    def put_text(self, item):  # intro, verse, etc. auto enter ili ne
+    def put_text(self, item):  # intro, verse, etc. auto enter
         if self.ids.chordpad.text == "":
             self.ids.chordpad.insert_text(f"{item}: ")
         else:
@@ -250,6 +250,10 @@ class ReadingModeScreen(Screen):
             pass
         else:
             DeletePadDialog().open()
+
+
+class AboutScreen(Screen):
+    pass
 
 
 class ScreenOrganize(ScreenManager):
