@@ -57,6 +57,8 @@
         name: "reading"
     ChordpadScreen:
         name: "editing"
+    AboutScreen:
+        name: "about"
 
 
 <MenuScreen>
@@ -82,17 +84,22 @@
             size_hint: 1, 0.01
         ButtonAll:
             size_hint: 1, 0.08
-            text: "New chordpad"
+            text: "New Chordpad"
             on_release:
                 root.new_chordpad()
                 root.manager.current = "editing"
         ButtonAll:
             id: back_to_chordpad
             size_hint: 1, 0.08
-            text: "Back to chordpad"
+            text: "Back to Chordpad"
             on_release:
                 root.back_to_chordpad()
                 root.manager.current = "editing"
+        ButtonAll:
+            size_hint: 1, 0.08
+            text: "About Chordpad"
+            on_release: root.manager.current = "about"
+
 
 
 <ReadingModeScreen>
@@ -130,6 +137,8 @@
         ButtonAll:
             text: "Delete Chordpad"
             size_hint: (1, 0.1)
+            background_color: [1,0.5,0.5,1]
+            background_down: ""
             on_release: root.delete_pad()
 
 
@@ -274,6 +283,39 @@
                 on_release:
                     chordpad.do_backspace()
                     chordpad.insert_text("\n")
+
+
+<AboutScreen>
+    name: "about"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        TopLabel:
+            size_hint: (1, 0.05)
+            text: "Chordpad by cvemir369"
+            halign: "center"
+        ButtonAll:
+            size_hint: 1, 0.08
+            text: "Main Menu"
+            on_release: root.manager.current = "menu"
+        Label:
+            size_hint: 1, 0.79
+            text_size: root.width, None
+            padding_x: 10
+            padding_y: 10
+            halign: "center"
+            valign: "middle"
+            font_size: self.width/23
+            text:
+                'A simple music chord notation editor with an easy chord and song structure input keyboard for easier song chords notation.\nMade with Python and Kivy library.\n\nChordpad v1.0.0 © by Miroslav Cvetković\ngithub.com/cvemir369\n\nIf you want to support my work, please press a "Buy me a coffee!" button below and donate by following the instructions on the web page.'
+        ButtonAll:
+            size_hint: 1, 0.08
+            background_color: [1,0.5,0.5,1]
+            background_down: ""
+            text: "Buy me a coffee!"
+            on_release:
+                import webbrowser
+                webbrowser.open("https://www.buymeacoffee.com/cvemir369")
 
 
 <SaveAsDialog>
